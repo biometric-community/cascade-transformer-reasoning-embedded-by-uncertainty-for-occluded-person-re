@@ -1,0 +1,8 @@
+outputs/
+__pycache__/
+*.pyc
+.venv/
+upstream/
+*.pt
+*.pth
+.DS_Store

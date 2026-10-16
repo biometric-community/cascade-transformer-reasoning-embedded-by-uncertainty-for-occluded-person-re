@@ -1,0 +1,39 @@
+paper:
+  slug: cascade-transformer-reasoning-embedded-by-uncertainty-for-occluded-person-re
+  title: "Cascade Transformer Reasoning Embedded by Uncertainty for Occluded Person Re-Identification"
+  doi: "10.1109/TBIOM.2024.3361677"
+  method: CTU
+data:
+  root: ../../datasets/market1501
+  height: 256
+  width: 128
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  random_erasing: true
+  num_workers: 4
+model:
+  dim: 256
+  num_layers: 2
+  num_heads: 8
+  # Paper N=20; we use 4 for tractable full train on one GPU (see DEVIATIONS.md)
+  n_samples: 4
+  beta: 1.38629436112  # log(4)
+train:
+  epochs: 60
+  batch_size: 64
+  num_instances: 4
+  lr: 0.00035
+  weight_decay: 0.0005
+  margin: 0.3
+  warmup_epochs: 10
+  label_smoothing: 0.0
+  log_every: 20
+  eval_every: 10
+eval:
+  batch_size: 64
+  ranks: [1, 5, 10]
+output:
+  dir: outputs
+  checkpoints: outputs/checkpoints
+  logs: outputs/logs
+  figures: outputs/figures
