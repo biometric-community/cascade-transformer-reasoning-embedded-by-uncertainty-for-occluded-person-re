@@ -27,7 +27,7 @@ def main() -> None:
     ckpt = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
     num_classes = int(ckpt.get("num_classes", 751))
     model = build_ctu(cfg, num_classes)
-    model.load_state_dict(ckpt["model"], strict=False)
+    model.load_state_dict(ckpt["model"], strict=True)
     model.to(device).eval()
     h, w = int(cfg["data"]["height"]), int(cfg["data"]["width"])
     tfm = transforms.Compose(
@@ -41,8 +41,9 @@ def main() -> None:
     with torch.no_grad():
         feat = model(img, train=False)["feat"].cpu().squeeze(0)
     out = {"image": args.image, "dim": int(feat.numel())}
-    Path("outputs/logs").mkdir(parents=True, exist_ok=True)
-    Path("outputs/logs/predict.json").write_text(json.dumps(out, indent=2))
+    log_dir = Path(cfg["output"]["logs"])
+    log_dir.mkdir(parents=True, exist_ok=True)
+    (log_dir / "predict.json").write_text(json.dumps(out, indent=2))
     print(json.dumps(out, indent=2))
 
 

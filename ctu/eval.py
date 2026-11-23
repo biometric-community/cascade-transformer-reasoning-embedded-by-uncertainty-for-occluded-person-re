@@ -25,7 +25,7 @@ def main() -> None:
     ckpt = torch.load(args.checkpoint, map_location=device, weights_only=False)
     num_classes = int(ckpt.get("num_classes", 751))
     model = build_ctu(cfg, num_classes).to(device)
-    model.load_state_dict(ckpt["model"], strict=False)
+    model.load_state_dict(ckpt["model"], strict=True)
     model.eval()
     q = extract_features(model, build_eval_loader(cfg, "query"), device)
     g = extract_features(model, build_eval_loader(cfg, "gallery"), device)
