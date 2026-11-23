@@ -43,15 +43,15 @@ def main() -> None:
     fig.savefig(figdir / "train_loss.svg", format="svg", bbox_inches="tight")
     plt.close(fig)
 
-    paper = {"mAP": 88.1, "Rank-1": 94.4}  # paper holistic Market numbers (approx R1 from text context)
-    # PDF: mAP 88.1% on Market; Rank-1 stated nearby as competitive — use 94.4 if transcribed else leave
-    # From PDF line 737: mAP 88.1 on Market; Rank-1 not always paired — use reported if in analysis tables
+    # Only the Market mAP of the paper is documented (FIDELITY_AUDIT.md); no paper Rank-1 is transcribed.
+    paper = {"mAP": 88.1}
     ours = {"mAP": float(metrics.get("mAP", 0)), "Rank-1": float(metrics.get("Rank-1", 0))}
     fig, ax = plt.subplots(figsize=plot_style.FIGSIZE)
     keys = ["mAP", "Rank-1"]
     x = range(len(keys))
     w = 0.35
-    ax.bar([i - w / 2 for i in x], [paper[k] for k in keys], width=w, color=plot_style.MULTI_SERIES_COLORS[0], label="Paper CTU (Market)")
+    paper_bars = [(i, paper[k]) for i, k in enumerate(keys) if k in paper]
+    ax.bar([i - w / 2 for i, _ in paper_bars], [v for _, v in paper_bars], width=w, color=plot_style.MULTI_SERIES_COLORS[0], label="Paper CTU (Market)")
     ax.bar([i + w / 2 for i in x], [ours[k] for k in keys], width=w, color=plot_style.MULTI_SERIES_COLORS[1], label="Ours (Market)")
     ax.set_xticks(list(x))
     ax.set_xticklabels(keys)
