@@ -49,7 +49,9 @@ def evaluate_rank(
         all_ap.append(ap)
     if not all_cmc:
         return {"mAP": 0.0, **{f"Rank-{r}": 0.0 for r in ranks}}
-    max_len = max(len(c) for c in all_cmc)
+    # Every kept list ends at 1 (each query has a match), so a rank beyond a short gallery is already certain.
+    # Pad to the largest requested rank as well as to the longest list.
+    max_len = max([len(c) for c in all_cmc] + [int(r) for r in ranks])
     cmc_mat = np.zeros((len(all_cmc), max_len))
     for i, c in enumerate(all_cmc):
         cmc_mat[i, : len(c)] = c

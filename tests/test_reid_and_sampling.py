@@ -59,6 +59,19 @@ def test_queries_without_any_match_score_zero():
     assert out == {"mAP": 0.0, "Rank-1": 0.0}
 
 
+def test_ranks_past_a_short_gallery_are_certain_matches():
+    # Three gallery items, one of them the query's identity on another camera. The match is ranked first, so
+    # every rank beyond the three items is reached as well and scores 100 instead of raising an error.
+    query = torch.tensor([[1.0, 0.0]])
+    gallery = torch.tensor([[1.0, 0.0], [0.0, 1.0], [0.0, -1.0]])
+    out = evaluate_rank(
+        query, np.array([1]), np.array([1]),
+        gallery, np.array([1, 2, 3]), np.array([2, 2, 2]),
+        ranks=(1, 5, 10),
+    )
+    assert out == pytest.approx({"mAP": 100.0, "Rank-1": 100.0, "Rank-5": 100.0, "Rank-10": 100.0})
+
+
 def test_identity_sampler_yields_blocks_of_instances_per_identity():
     random.seed(0)
     labels = [pid for pid in range(6) for _ in range(5)]
